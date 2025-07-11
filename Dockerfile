@@ -14,6 +14,8 @@ WORKDIR /var/www
 
 # Copier les fichiers du projet
 COPY . .
+
+# Supprimer un éventuel .env local
 RUN rm -f .env
 
 # Installer Composer
@@ -28,16 +30,14 @@ RUN chown -R www-data:www-data /var/www && chmod -R 755 /var/www
 # Définir le document root sur /var/www/public
 ENV APACHE_DOCUMENT_ROOT /var/www/public
 
-# Changer le VirtualHost pour qu’il pointe vers le bon dossier
+# Modifier les fichiers Apache pour pointer vers /public
 RUN sed -ri -e 's!/var/www/html!/var/www/public!g' /etc/apache2/sites-available/*.conf && \
     sed -ri -e 's!/var/www/html!/var/www/public!g' /etc/apache2/apache2.conf
 
+# Ajouter le script de démarrage
 COPY start.sh /start.sh
 RUN chmod +x /start.sh
 
 CMD ["/start.sh"]
 
 EXPOSE 80
-
-
-

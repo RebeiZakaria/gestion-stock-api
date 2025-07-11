@@ -1,19 +1,18 @@
 #!/bin/bash
 
-# Exécute les migrations s’il y en a
-php artisan migrate --force
+# Appliquer les permissions
+chmod -R 775 storage bootstrap/cache
 
+# Générer la clé si absente
+php artisan key:generate --force || true
+
+# Cacher la config
 php artisan config:clear
 php artisan cache:clear
 php artisan config:cache
-php artisan migrate --force
-php artisan key:generate --force
-chmod -R 775 storage bootstrap/cache
 
-if [ ! -f .env ]; then
-  echo "" > .env
-fi
+# Migrer la BDD (si connectée)
+php artisan migrate --force || true
 
-
-# Démarre Apache (important pour Render)
+# Démarrer Apache (Render)
 apache2-foreground
