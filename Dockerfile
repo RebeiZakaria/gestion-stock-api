@@ -31,4 +31,12 @@ ENV APACHE_DOCUMENT_ROOT /var/www/public
 RUN sed -ri -e 's!/var/www/html!/var/www/public!g' /etc/apache2/sites-available/*.conf && \
     sed -ri -e 's!/var/www/html!/var/www/public!g' /etc/apache2/apache2.conf
 
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
+CMD ["/start.sh"]
+
 EXPOSE 80
+
+
+
