@@ -1,6 +1,6 @@
 FROM php:8.2-apache
 
-# Install system dependencies
+# Install required extensions
 RUN apt-get update && apt-get install -y \
     libzip-dev zip unzip git curl libpng-dev libonig-dev libxml2-dev \
     && docker-php-ext-install pdo_mysql mbstring zip exif pcntl
@@ -9,14 +9,16 @@ RUN apt-get update && apt-get install -y \
 RUN a2enmod rewrite
 
 # Set working directory
-WORKDIR /var/www/html
+WORKDIR /var/www
 
-# Copy existing application directory contents
-COPY . /var/www/html
+# Copy project files
+COPY . /var/www
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html
+# Move public/ to html/ so Apache serves Laravel correctly
+RUN rm -rf /var/www/html && mv /var/www/public /var/www/html
+
+# Fix permissions
+RUN chown -R www-data:www-data /var/www && chmod -R 755 /var/www
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
