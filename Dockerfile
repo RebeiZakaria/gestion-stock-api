@@ -1,27 +1,34 @@
+# Étape 1 : Image PHP avec Apache
 FROM php:8.2-apache
 
-# Install required extensions
+# Installer les extensions nécessaires
 RUN apt-get update && apt-get install -y \
     libzip-dev zip unzip git curl libpng-dev libonig-dev libxml2-dev \
     && docker-php-ext-install pdo_mysql mbstring zip exif pcntl
 
-# Enable Apache mod_rewrite
+# Activer mod_rewrite pour Laravel
 RUN a2enmod rewrite
 
-# Set working directory
+# Définir le répertoire de travail
 WORKDIR /var/www
 
-# Copy project files
-COPY . /var/www
+# Copier les fichiers du projet
+COPY . .
 
-# Move public/ to html/ so Apache serves Laravel correctly
-RUN rm -rf /var/www/html && mv /var/www/public /var/www/html
-
-# Fix permissions
-RUN chown -R www-data:www-data /var/www && chmod -R 755 /var/www
-
-# Install Composer
+# Installer Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Expose port 80
+# Installer les dépendances Laravel
+RUN composer install --no-interaction --no-dev --optimize-autoloader
+
+# Donner les bonnes permissions
+RUN chown -R www-data:www-data /var/www && chmod -R 755 /var/www
+
+# Définir le document root sur /var/www/public
+ENV APACHE_DOCUMENT_ROOT /var/www/public
+
+# Changer le VirtualHost pour qu’il pointe vers le bon dossier
+RUN sed -ri -e 's!/var/www/html!/var/www/public!g' /etc/apache2/sites-available/*.conf && \
+    sed -ri -e 's!/var/www/html!/var/www/public!g' /etc/apache2/apache2.conf
+
 EXPOSE 80
