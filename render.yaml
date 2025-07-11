@@ -2,7 +2,6 @@ services:
   - type: web
     name: gestion-stock-api
     env: php
-    region: frankfurt
     plan: free
     buildCommand: |
       composer install --no-dev --optimize-autoloader
@@ -39,6 +38,7 @@ services:
         fromDatabase:
           name: gestion-stock-db
           property: password
+
 databases:
   - name: gestion-stock-db
     plan: free
