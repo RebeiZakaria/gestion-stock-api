@@ -4,10 +4,6 @@ services:
     env: docker
     plan: free
     dockerfilePath: ./Dockerfile
-    buildFilter:
-      paths:
-        - Dockerfile
-        - .    # ✅ PAS de slash ici
     envVars:
       - key: APP_ENV
         value: production
