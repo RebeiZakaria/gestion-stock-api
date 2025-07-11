@@ -14,6 +14,7 @@ WORKDIR /var/www
 
 # Copier les fichiers du projet
 COPY . .
+COPY .env.example .env
 
 # Supprimer un éventuel .env local
 RUN rm -f .env

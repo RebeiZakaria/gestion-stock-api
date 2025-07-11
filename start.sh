@@ -1,18 +1,21 @@
 #!/bin/bash
 
-# Appliquer les permissions
+# Assure-toi que .env est bien présent et les permissions sont correctes
 chmod -R 775 storage bootstrap/cache
 
-# Générer la clé si absente
-php artisan key:generate --force || true
-
-# Cacher la config
+# Laravel config
 php artisan config:clear
 php artisan cache:clear
 php artisan config:cache
 
-# Migrer la BDD (si connectée)
-php artisan migrate --force || true
+# Génère la clé de l'application
+php artisan key:generate --force
 
-# Démarrer Apache (Render)
+# (optionnel) attend quelques secondes pour être sûr que DB est up
+sleep 10
+
+# Lancer les migrations
+php artisan migrate --force
+
+# Start Apache
 apache2-foreground
