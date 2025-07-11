@@ -10,6 +10,10 @@ php artisan migrate --force
 php artisan key:generate --force
 chmod -R 775 storage bootstrap/cache
 
+if [ ! -f .env ]; then
+  echo "" > .env
+fi
+
 
 # Démarre Apache (important pour Render)
 apache2-foreground
