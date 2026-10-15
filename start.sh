@@ -17,5 +17,14 @@ sleep 10
 # Lancer les migrations
 php artisan migrate --force
 
-# Start Apache
-apache2-foreground
+# Corriger les modules MPM au démarrage
+a2dismod mpm_event 2>/dev/null || true
+a2dismod mpm_worker 2>/dev/null || true
+a2dismod mpm_prefork 2>/dev/null || true
+
+a2enmod mpm_prefork
+
+# Vérifier la configuration avant de démarrer Apache
+apache2ctl configtest
+
+exec apache2-foreground
