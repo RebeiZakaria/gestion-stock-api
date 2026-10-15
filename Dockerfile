@@ -6,8 +6,10 @@ RUN apt-get update && apt-get install -y \
     libzip-dev zip unzip git curl libpng-dev libonig-dev libxml2-dev \
     && docker-php-ext-install pdo_mysql mbstring zip exif pcntl
 
-# Activer mod_rewrite pour Laravel
-RUN a2enmod rewrite
+# Conserver un seul MPM compatible avec PHP sous Apache
+RUN a2dismod mpm_event mpm_worker 2>/dev/null || true
+
+RUN a2enmod mpm_prefork rewrite
 
 # Définir le répertoire de travail
 WORKDIR /var/www
